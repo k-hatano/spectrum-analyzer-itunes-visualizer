@@ -312,9 +312,8 @@ static OSStatus VisualPluginHandler(OSType message,VisualPluginMessageInfo *mess
 		*/
 		case kVisualPluginDrawMessage:
 		{
-			#if !USE_SUBVIEW
 			DrawVisual( visualPluginData );
-			#endif
+            InvalidateVisual( visualPluginData );
 			break;
 		}
 		/*

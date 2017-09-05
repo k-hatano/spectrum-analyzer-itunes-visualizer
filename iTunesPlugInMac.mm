@@ -102,35 +102,50 @@ void DrawVisual( VisualPluginData * visualPluginData )
 	if ( visualPluginData->destView == NULL )
 		return;
 
-	drawRect = [visualPluginData->destView bounds];
-
+	CGRect viewRect = [visualPluginData->destView bounds];
+    drawRect = viewRect;
+    
 	[[NSColor blackColor] set];
 	NSRectFill( drawRect );
-
-	drawRect = NSMakeRect( where.x, where.y, 100, 100 );
-
-	NSRectFill( drawRect );
+    
+    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:[NSColor grayColor]
+                                                         endingColor:[NSColor blackColor]];
+    drawRect.size.height /= 2;
+    [gradient drawInRect:drawRect angle:90.0f];
+    
+    NSInteger widthUnit = [visualPluginData->destView bounds].size.width / 20;
+    NSInteger heightUnit = [visualPluginData->destView bounds].size.height;
+    
+    NSInteger x,y,width,height;
     
     for (NSInteger i = 0; i < 16; i++) {
         [[NSColor colorWithHue:i/16.0f saturation:1.0f brightness:1.0f alpha:1.0f] set];
         
-        NSInteger x = [visualPluginData->destView bounds].size.width / 16 * i;
-        NSInteger width = [visualPluginData->destView bounds].size.width / 16;
-        NSInteger y = 0;
-        NSInteger height = visualPluginData->renderData.spectrumData[0][i*16] / 256.0f * [visualPluginData->destView bounds].size.height;
+        x = widthUnit * (i + 2) + (widthUnit / 16);
+        width = widthUnit - (widthUnit / 8);
+        y = heightUnit / 6;
+        height = visualPluginData->renderData.spectrumData[0][i*16] / 256.0f * (heightUnit * 2 / 3);
         
         drawRect = NSMakeRect( x, y, width, height );
         NSRectFill( drawRect );
+        
+        [[NSColor colorWithHue:i/16.0f saturation:1.0f brightness:1.0f alpha:0.3f] set];
+        
+        x = widthUnit * (i + 2) + (widthUnit / 16);
+        width = widthUnit - (widthUnit / 8);
+        y = heightUnit / 6 - (visualPluginData->renderData.spectrumData[0][i*16] / 256.0f * (heightUnit * 2 / 3));
+        height = visualPluginData->renderData.spectrumData[0][i*16] / 256.0f * (heightUnit * 2 / 3);
+        
+        drawRect = NSMakeRect( x, y, width, height );
+        NSRectFillUsingOperation(drawRect, NSCompositeSourceOver);
     }
 
 	// should we draw the info/artwork in the bottom-left corner?
 	time_t		theTime = time( NULL );
 
-	if ( theTime < visualPluginData->drawInfoTimeOut )
-	{
-		where = CGPointMake( 10, 10 );
-
-		// if we have a song title, draw it (prefer the stream title over the regular name if we have it)
+	if ( theTime < visualPluginData->drawInfoTimeOut ){
+        where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
+                            , viewRect.size.height - 10 - 24);		// if we have a song title, draw it (prefer the stream title over the regular name if we have it)
 		NSString *				theString = NULL;
 
 		if ( visualPluginData->streamInfo.streamTitle[0] != 0 )
@@ -148,7 +163,8 @@ void DrawVisual( VisualPluginData * visualPluginData )
 		// draw the artwork
 		if ( visualPluginData->currentArtwork != NULL )
 		{
-			where.y += 20;
+            where = CGPointMake( 10,
+                                viewRect.size.height - 10 - visualPluginData->currentArtwork.size.height);
 
 			[visualPluginData->currentArtwork drawAtPoint:where fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:0.75];
 		}
