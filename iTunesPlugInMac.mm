@@ -90,6 +90,15 @@ extern "C" OSStatus iTunesPluginMainMachO( OSType inMessage, PluginMessageInfo *
 
 #endif	// USE_SUBVIEW
 
+UInt8 averageOfSpectrumData(UInt8 *spectrumData, NSInteger position, NSInteger length){
+    NSUInteger result = 0;
+    NSInteger index;
+    for (index = position; index < position + length; index++) {
+        result += spectrumData[index];
+    }
+    return (UInt8)(result / length);
+}
+
 //-------------------------------------------------------------------------------------------------
 //	DrawVisual
 //-------------------------------------------------------------------------------------------------
@@ -121,10 +130,12 @@ void DrawVisual( VisualPluginData * visualPluginData )
     for (NSInteger i = 0; i < 16; i++) {
         [[NSColor colorWithHue:i/16.0f saturation:1.0f brightness:1.0f alpha:1.0f] set];
         
+        UInt8 spectrum = averageOfSpectrumData(visualPluginData->renderData.spectrumData[0], i*16, 16);
+        
         x = widthUnit * (i + 2) + (widthUnit / 16);
         width = widthUnit - (widthUnit / 8);
         y = heightUnit / 6;
-        height = visualPluginData->renderData.spectrumData[0][i*16] / 256.0f * (heightUnit * 2 / 3);
+        height = spectrum / 256.0f * (heightUnit * 2 / 3);
         
         drawRect = NSMakeRect( x, y, width, height );
         NSRectFill( drawRect );
@@ -133,8 +144,8 @@ void DrawVisual( VisualPluginData * visualPluginData )
         
         x = widthUnit * (i + 2) + (widthUnit / 16);
         width = widthUnit - (widthUnit / 8);
-        y = heightUnit / 6 - (visualPluginData->renderData.spectrumData[0][i*16] / 256.0f * (heightUnit * 2 / 3));
-        height = visualPluginData->renderData.spectrumData[0][i*16] / 256.0f * (heightUnit * 2 / 3);
+        y = heightUnit / 6 - (spectrum / 256.0f * (heightUnit * 2 / 3));
+        height = spectrum / 256.0f * (heightUnit * 2 / 3);
         
         drawRect = NSMakeRect( x, y, width, height );
         NSRectFillUsingOperation(drawRect, NSCompositeSourceOver);
