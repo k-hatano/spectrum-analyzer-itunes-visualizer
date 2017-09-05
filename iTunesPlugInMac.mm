@@ -144,23 +144,45 @@ void DrawVisual( VisualPluginData * visualPluginData )
 	time_t		theTime = time( NULL );
 
 	if ( theTime < visualPluginData->drawInfoTimeOut ){
-        where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
-                            , viewRect.size.height - 10 - 24);		// if we have a song title, draw it (prefer the stream title over the regular name if we have it)
-		NSString *				theString = NULL;
+        NSString *theString = NULL;
+        
+        if ( visualPluginData->streamInfo.streamTitle[0] != 0 ) {
+            theString = [NSString stringWithCharacters:&visualPluginData->streamInfo.streamTitle[1] length:visualPluginData->streamInfo.streamTitle[0]];
+        }
+        else if ( visualPluginData->trackInfo.name[0] != 0 ) {
+            theString = [NSString stringWithCharacters:&visualPluginData->trackInfo.name[1] length:visualPluginData->trackInfo.name[0]];
+        }
+        if ( theString != NULL ){
+            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
+            where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
+                                , viewRect.size.height - 10 - 24);
+            [theString drawAtPoint:where withAttributes:attrs];
+        }
 
-		if ( visualPluginData->streamInfo.streamTitle[0] != 0 )
-			theString = [NSString stringWithCharacters:&visualPluginData->streamInfo.streamTitle[1] length:visualPluginData->streamInfo.streamTitle[0]];
-		else if ( visualPluginData->trackInfo.name[0] != 0 )
-			theString = [NSString stringWithCharacters:&visualPluginData->trackInfo.name[1] length:visualPluginData->trackInfo.name[0]];
-		
-		if ( theString != NULL )
-		{
-			NSDictionary *		attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
-			
-			[theString drawAtPoint:where withAttributes:attrs];
-		}
-
-		// draw the artwork
+		theString = NULL;
+        if ( visualPluginData->trackInfo.artist[0] != 0 ) {
+            theString = [NSString stringWithCharacters:&visualPluginData->trackInfo.artist[1] length:visualPluginData->trackInfo.artist[0]];
+        }
+        if ( theString != NULL ){
+            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
+            where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
+                                , viewRect.size.height - 10 - 36);
+            [theString drawAtPoint:where withAttributes:attrs];
+        }
+        
+        
+        theString = NULL;
+        if ( visualPluginData->trackInfo.album[0] != 0 ) {
+            theString = [NSString stringWithCharacters:&visualPluginData->trackInfo.album[1] length:visualPluginData->trackInfo.album[0]];
+        }
+        if ( theString != NULL ){
+            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
+            where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
+                                , viewRect.size.height - 10 - 48);
+            [theString drawAtPoint:where withAttributes:attrs];
+        }
+        
+        
 		if ( visualPluginData->currentArtwork != NULL )
 		{
             where = CGPointMake( 10,
