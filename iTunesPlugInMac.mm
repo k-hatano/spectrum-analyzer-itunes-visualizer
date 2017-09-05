@@ -60,7 +60,7 @@
 //	constants, etc.
 //-------------------------------------------------------------------------------------------------
 
-#define kTVisualPluginName              CFSTR("iTunes Sample Visualizer")
+#define kTVisualPluginName              CFSTR("Spectrum Analyzer iTunes Visualizer")
 
 //-------------------------------------------------------------------------------------------------
 //	exported function prototypes
@@ -155,7 +155,7 @@ void DrawVisual( VisualPluginData * visualPluginData )
         if ( theString != NULL ){
             NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
             where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
-                                , viewRect.size.height - 10 - 24);
+                                , viewRect.size.height - 10 - 20);
             [theString drawAtPoint:where withAttributes:attrs];
         }
 
@@ -178,7 +178,7 @@ void DrawVisual( VisualPluginData * visualPluginData )
         if ( theString != NULL ){
             NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
             where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
-                                , viewRect.size.height - 10 - 48);
+                                , viewRect.size.height - 10 - 52);
             [theString drawAtPoint:where withAttributes:attrs];
         }
         
