@@ -157,7 +157,7 @@ void DrawVisual( VisualPluginData * visualPluginData )
         x = widthUnit * (i + 2) + (widthUnit / 16);
         width = widthUnit - (widthUnit / 8);
         y = heightUnit / 6 + (maxSpectrum[i] / 256.0f * (heightUnit * 2 / 3));
-        height = maxSpectrum[i] <= 0 ? 0 : 1;
+        height = maxSpectrum[i] <= 2 ? maxSpectrum[i] : 2;
         
         drawRect = NSMakeRect( x, y, width, height );
         NSRectFill( drawRect );
