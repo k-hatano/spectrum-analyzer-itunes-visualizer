@@ -28,7 +28,7 @@
 		9542E97413D61AFE00EE8D31 /* iTunesAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = iTunesAPI.cpp; sourceTree = "<group>"; };
 		AF289ABC0CDFDCF200C8C0B4 /* iTunes_Visualizer-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iTunes_Visualizer-Info.plist"; sourceTree = "<group>"; };
 		DC13014413AB3AB40013DDA5 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		DC2667A60BD9410900B4ED68 /* Spectrum Analyzer iTunes Visualizer.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spectrum Analyzer iTunes Visualizer.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC2667A60BD9410900B4ED68 /* Spectrum Analyzer Visualizer.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spectrum Analyzer Visualizer.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC61BBEA13CBD871008AD92E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/ConfigurePanel.xib; sourceTree = "<group>"; };
 		DC8CE6DE13A31B4500963E07 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		DC8CE75913A34EB500963E07 /* iTunesPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iTunesPlugIn.h; sourceTree = "<group>"; };
@@ -101,7 +101,7 @@
 		19C28FB6FE9D52B211CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DC2667A60BD9410900B4ED68 /* Spectrum Analyzer iTunes Visualizer.bundle */,
+				DC2667A60BD9410900B4ED68 /* Spectrum Analyzer Visualizer.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,7 +138,7 @@
 			name = "iTunes Visualizer";
 			productInstallPath = "/Users/guillerm/Library/iTunes/iTunes Plug-ins";
 			productName = iTunesPlugIn;
-			productReference = DC2667A60BD9410900B4ED68 /* Spectrum Analyzer iTunes Visualizer.bundle */;
+			productReference = DC2667A60BD9410900B4ED68 /* Spectrum Analyzer Visualizer.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -250,7 +250,7 @@
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.nita.SpectrumAnalyzerVisualizer;
-				PRODUCT_NAME = "Spectrum Analyzer iTunes Visualizer";
+				PRODUCT_NAME = "Spectrum Analyzer Visualizer";
 				REZ_EXECUTABLE = YES;
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -278,7 +278,7 @@
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.nita.SpectrumAnalyzerVisualizer;
-				PRODUCT_NAME = "Spectrum Analyzer iTunes Visualizer";
+				PRODUCT_NAME = "Spectrum Analyzer Visualizer";
 				REZ_EXECUTABLE = YES;
 				WARNING_CFLAGS = (
 					"-Wmost",
