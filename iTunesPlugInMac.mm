@@ -90,6 +90,9 @@ extern "C" OSStatus iTunesPluginMainMachO( OSType inMessage, PluginMessageInfo *
 
 #endif	// USE_SUBVIEW
 
+long maxSpectrum[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+double timeOfMaxSpectrum[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
 UInt8 averageOfSpectrumData(UInt8 *spectrumData, NSInteger position, NSInteger length){
     NSUInteger result = 0;
     NSInteger index;
@@ -132,6 +135,16 @@ void DrawVisual( VisualPluginData * visualPluginData )
         
         UInt8 spectrum = averageOfSpectrumData(visualPluginData->renderData.spectrumData[0], i*16, 16);
         
+        if (spectrum > maxSpectrum[i]) {
+            maxSpectrum[i] = spectrum;
+            timeOfMaxSpectrum[i] = CFAbsoluteTimeGetCurrent();
+        } else if (CFAbsoluteTimeGetCurrent() > timeOfMaxSpectrum[i]) {
+            if (maxSpectrum[i] > 0 ){
+                maxSpectrum[i] -= 2;
+            }
+        }
+        
+        // Positive Bar
         x = widthUnit * (i + 2) + (widthUnit / 16);
         width = widthUnit - (widthUnit / 8);
         y = heightUnit / 6;
@@ -140,8 +153,18 @@ void DrawVisual( VisualPluginData * visualPluginData )
         drawRect = NSMakeRect( x, y, width, height );
         NSRectFill( drawRect );
         
-        [[NSColor colorWithHue:i/16.0f saturation:1.0f brightness:1.0f alpha:0.3f] set];
+        // Top of Positive Bar
+        x = widthUnit * (i + 2) + (widthUnit / 16);
+        width = widthUnit - (widthUnit / 8);
+        y = heightUnit / 6 + (maxSpectrum[i] / 256.0f * (heightUnit * 2 / 3));
+        height = maxSpectrum[i] <= 0 ? 0 : 1;
         
+        drawRect = NSMakeRect( x, y, width, height );
+        NSRectFill( drawRect );
+        
+        // Negative (Reflected) Bar
+        
+        [[NSColor colorWithHue:i/16.0f saturation:1.0f brightness:1.0f alpha:0.3f] set];
         x = widthUnit * (i + 2) + (widthUnit / 16);
         width = widthUnit - (widthUnit / 8);
         y = heightUnit / 6 - (spectrum / 256.0f * (heightUnit * 2 / 3));
@@ -194,7 +217,8 @@ void DrawVisual( VisualPluginData * visualPluginData )
         }
         
         
-		if ( visualPluginData->currentArtwork != NULL )
+		if ( visualPluginData->currentArtwork != NULL &&
+            (visualPluginData->streamInfo.streamTitle[0] != 0 || visualPluginData->trackInfo.name[0] != 0) )
 		{
             where = CGPointMake( 10,
                                 viewRect.size.height - 10 - visualPluginData->currentArtwork.size.height);
