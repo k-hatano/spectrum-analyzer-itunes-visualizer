@@ -60,7 +60,7 @@
 //	constants, etc.
 //-------------------------------------------------------------------------------------------------
 
-#define kTVisualPluginName              CFSTR("Spectrum Analyzer iTunes Visualizer")
+#define kTVisualPluginName              CFSTR("Spectrum Analyzer Visualizer")
 
 //-------------------------------------------------------------------------------------------------
 //	exported function prototypes
@@ -92,6 +92,7 @@ extern "C" OSStatus iTunesPluginMainMachO( OSType inMessage, PluginMessageInfo *
 
 long maxSpectrum[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 double timeOfMaxSpectrum[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+double fadeoutTime;
 
 UInt8 averageOfSpectrumData(UInt8 *spectrumData, NSInteger position, NSInteger length){
     NSUInteger result = 0;
@@ -177,8 +178,33 @@ void DrawVisual( VisualPluginData * visualPluginData )
 	// should we draw the info/artwork in the bottom-left corner?
 	time_t		theTime = time( NULL );
 
-	if ( theTime < visualPluginData->drawInfoTimeOut ){
+	if ( theTime < visualPluginData->drawInfoTimeOut + 1 ){
+        float width = 0;
+        float height = 0;
+        if (visualPluginData->currentArtwork != NULL) {
+            width = visualPluginData->currentArtwork.size.width / 2;
+            height = visualPluginData->currentArtwork.size.height / 2;
+        }
+        
         NSString *theString = NULL;
+        
+        NSColor *color;
+        float fraction;
+        if (theTime < visualPluginData->drawInfoTimeOut) {
+            fadeoutTime = CFAbsoluteTimeGetCurrent();
+            color = [NSColor colorWithCalibratedWhite:1.0f alpha:1.0];
+            fraction = 0.75;
+        } else {
+            color = [NSColor colorWithCalibratedWhite:1.0f alpha:(1.0 - (CFAbsoluteTimeGetCurrent() - fadeoutTime))];
+            fraction = (1.0 - (CFAbsoluteTimeGetCurrent() - fadeoutTime)) * 0.75;
+        }
+        
+        if (fraction > 1.0) {
+            fraction = 1.0;
+        } else if (fraction < 0.0) {
+            fraction = 0.0;
+        }
+        
         
         if ( visualPluginData->streamInfo.streamTitle[0] != 0 ) {
             theString = [NSString stringWithCharacters:&visualPluginData->streamInfo.streamTitle[1] length:visualPluginData->streamInfo.streamTitle[0]];
@@ -187,9 +213,9 @@ void DrawVisual( VisualPluginData * visualPluginData )
             theString = [NSString stringWithCharacters:&visualPluginData->trackInfo.name[1] length:visualPluginData->trackInfo.name[0]];
         }
         if ( theString != NULL ){
-            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
-            where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
-                                , viewRect.size.height - 10 - 20);
+            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:color, NSForegroundColorAttributeName, NULL];
+            where = CGPointMake( 20 + width
+                                , viewRect.size.height - 10 - 16);
             [theString drawAtPoint:where withAttributes:attrs];
         }
 
@@ -198,9 +224,9 @@ void DrawVisual( VisualPluginData * visualPluginData )
             theString = [NSString stringWithCharacters:&visualPluginData->trackInfo.artist[1] length:visualPluginData->trackInfo.artist[0]];
         }
         if ( theString != NULL ){
-            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
-            where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
-                                , viewRect.size.height - 10 - 36);
+            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:color, NSForegroundColorAttributeName, NULL];
+            where = CGPointMake( 20 + width
+                                , viewRect.size.height - 10 - 32);
             [theString drawAtPoint:where withAttributes:attrs];
         }
         
@@ -210,9 +236,9 @@ void DrawVisual( VisualPluginData * visualPluginData )
             theString = [NSString stringWithCharacters:&visualPluginData->trackInfo.album[1] length:visualPluginData->trackInfo.album[0]];
         }
         if ( theString != NULL ){
-            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor whiteColor], NSForegroundColorAttributeName, NULL];
-            where = CGPointMake( 20 + visualPluginData->currentArtwork.size.width
-                                , viewRect.size.height - 10 - 52);
+            NSDictionary * attrs = [NSDictionary dictionaryWithObjectsAndKeys:color, NSForegroundColorAttributeName, NULL];
+            where = CGPointMake( 20 + width
+                                , viewRect.size.height - 10 - 48);
             [theString drawAtPoint:where withAttributes:attrs];
         }
         
@@ -220,10 +246,7 @@ void DrawVisual( VisualPluginData * visualPluginData )
 		if ( visualPluginData->currentArtwork != NULL &&
             (visualPluginData->streamInfo.streamTitle[0] != 0 || visualPluginData->trackInfo.name[0] != 0) )
 		{
-            where = CGPointMake( 10,
-                                viewRect.size.height - 10 - visualPluginData->currentArtwork.size.height);
-
-			[visualPluginData->currentArtwork drawAtPoint:where fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:0.75];
+            [visualPluginData->currentArtwork drawInRect:NSMakeRect(10, viewRect.size.height - 10 - height, width, height) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:fraction];
 		}
 	}
 }
