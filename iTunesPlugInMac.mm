@@ -485,7 +485,7 @@ void GetVisualName( ITUniStr255 name )
 //
 OptionBits GetVisualOptions( void )
 {
-	OptionBits		options = (kVisualSupportsMuxedGraphics | kVisualWantsIdleMessages | kVisualWantsConfigure);
+	OptionBits		options = (kVisualSupportsMuxedGraphics | kVisualWantsIdleMessages);
 	
 #if USE_SUBVIEW
 	options |= kVisualUsesSubview;
