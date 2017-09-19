@@ -17,10 +17,10 @@
 	<key>CFBundlePackageType</key>
 	<string>hvpl</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>0.1b</string>
 	<key>CFBundleSignature</key>
 	<string>hook</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>0.1b</string>
 </dict>
 </plist>
