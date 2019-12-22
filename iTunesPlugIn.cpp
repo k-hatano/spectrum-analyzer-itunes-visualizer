@@ -312,8 +312,7 @@ static OSStatus VisualPluginHandler(OSType message,VisualPluginMessageInfo *mess
 		*/
 		case kVisualPluginDrawMessage:
 		{
-			DrawVisual( visualPluginData );
-            InvalidateVisual( visualPluginData );
+            DrawVisual( visualPluginData );
 			break;
 		}
 		/*
@@ -411,10 +410,10 @@ OSStatus RegisterVisualPlugin( PluginMessageInfo * messageInfo )
 	playerMessageInfo.u.registerVisualPluginMessage.numWaveformChannels		= 2;
 	playerMessageInfo.u.registerVisualPluginMessage.numSpectrumChannels		= 2;
 	
-	playerMessageInfo.u.registerVisualPluginMessage.minWidth				= 64;
-	playerMessageInfo.u.registerVisualPluginMessage.minHeight				= 64;
-	playerMessageInfo.u.registerVisualPluginMessage.maxWidth				= 0;	// no max width limit
-	playerMessageInfo.u.registerVisualPluginMessage.maxHeight				= 0;	// no max height limit
+	playerMessageInfo.u.registerVisualPluginMessage.minWidth				= 0;
+	playerMessageInfo.u.registerVisualPluginMessage.minHeight				= 0;
+	playerMessageInfo.u.registerVisualPluginMessage.maxWidth				= 64;	// no max width limit
+	playerMessageInfo.u.registerVisualPluginMessage.maxHeight				= 64;	// no max height limit
 	
 	status = PlayerRegisterVisualPlugin( messageInfo->u.initMessage.appCookie, messageInfo->u.initMessage.appProc, &playerMessageInfo );
 		
