@@ -90,12 +90,14 @@ extern "C" OSStatus iTunesPluginMainMachO( OSType inMessage, PluginMessageInfo *
 
 #endif	// USE_SUBVIEW
 
-long maxSpectrum[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-double timeOfMaxSpectrum[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+#define SPECTRUMS_NUM 32
+
+long maxSpectrum[SPECTRUMS_NUM] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+double timeOfMaxSpectrum[SPECTRUMS_NUM] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 double fadeoutTime;
 
 UInt8 averageOfSpectrumData(UInt8 *spectrumData, NSInteger position, NSInteger length){
-    NSUInteger result = 0;
+    unsigned long result = 0;
     NSInteger index;
     for (index = position; index < position + length; index++) {
         result += spectrumData[index];
@@ -128,15 +130,18 @@ void DrawVisual( VisualPluginData * visualPluginData )
     drawRect.size.height /= 2;
     [gradient drawInRect:drawRect angle:90.0f];
     
-    NSInteger widthUnit = [visualPluginData->destView bounds].size.width / 20;
+    NSInteger samplesInAll = sizeof(visualPluginData->renderData.spectrumData[0]) / sizeof(visualPluginData->renderData.spectrumData[0][0]) / 2;
+    NSInteger samplesInBar = samplesInAll / SPECTRUMS_NUM;
+    
+    NSInteger widthUnit = [visualPluginData->destView bounds].size.width / (SPECTRUMS_NUM + 4);
     NSInteger heightUnit = [visualPluginData->destView bounds].size.height;
     
     NSInteger x,y,width,height;
     
-    for (NSInteger i = 0; i < 16; i++) {
-        [[NSColor colorWithHue:i/16.0f saturation:1.0f brightness:1.0f alpha:1.0f] set];
+    for (NSInteger i = 0; i < SPECTRUMS_NUM; i++) {
+        [[NSColor colorWithHue:i/(SPECTRUMS_NUM * 1.25f) saturation:1.0f brightness:1.0f alpha:1.0f] set];
         
-        UInt8 spectrum = averageOfSpectrumData(visualPluginData->renderData.spectrumData[0], i*16, 16);
+        UInt8 spectrum = averageOfSpectrumData(visualPluginData->renderData.spectrumData[0], i * samplesInBar, samplesInBar);
         
         if (spectrum > maxSpectrum[i]) {
             maxSpectrum[i] = spectrum;
@@ -148,8 +153,8 @@ void DrawVisual( VisualPluginData * visualPluginData )
         }
         
         // Positive Bar
-        x = widthUnit * (i + 2) + (widthUnit / 16);
-        width = widthUnit - (widthUnit / 8);
+        x = widthUnit * (i + 2) + (widthUnit / SPECTRUMS_NUM);
+        width = widthUnit - (widthUnit / (SPECTRUMS_NUM / 2));
         y = heightUnit / 6;
         height = spectrum / 256.0f * (heightUnit * 2 / 3);
         
@@ -157,8 +162,8 @@ void DrawVisual( VisualPluginData * visualPluginData )
         NSRectFill( drawRect );
         
         // Top of Positive Bar
-        x = widthUnit * (i + 2) + (widthUnit / 16);
-        width = widthUnit - (widthUnit / 8);
+        x = widthUnit * (i + 2) + (widthUnit / SPECTRUMS_NUM);
+        width = widthUnit - (widthUnit / (SPECTRUMS_NUM / 2));
         y = heightUnit / 6 + (maxSpectrum[i] / 256.0f * (heightUnit * 2 / 3));
         height = maxSpectrum[i] <= 2 ? maxSpectrum[i] : 2;
         
@@ -167,14 +172,14 @@ void DrawVisual( VisualPluginData * visualPluginData )
         
         // Negative (Reflected) Bar
         
-        [[NSColor colorWithHue:i/16.0f saturation:1.0f brightness:1.0f alpha:0.3f] set];
-        x = widthUnit * (i + 2) + (widthUnit / 16);
-        width = widthUnit - (widthUnit / 8);
+        [[NSColor colorWithHue:i/(SPECTRUMS_NUM * 1.25f) saturation:1.0f brightness:1.0f alpha:0.3f] set];
+        x = widthUnit * (i + 2) + (widthUnit / SPECTRUMS_NUM);
+        width = widthUnit - (widthUnit / (SPECTRUMS_NUM / 2));
         y = heightUnit / 6 - (spectrum / 256.0f * (heightUnit * 2 / 3));
         height = spectrum / 256.0f * (heightUnit * 2 / 3);
         
         drawRect = NSMakeRect( x, y, width, height );
-        NSRectFillUsingOperation(drawRect, NSCompositeSourceOver);
+        NSRectFillUsingOperation(drawRect, NSCompositingOperationSourceOver);
     }
 
 	// should we draw the info/artwork in the bottom-left corner?
@@ -248,7 +253,7 @@ void DrawVisual( VisualPluginData * visualPluginData )
 		if ( visualPluginData->currentArtwork != NULL &&
             (visualPluginData->streamInfo.streamTitle[0] != 0 || visualPluginData->trackInfo.name[0] != 0) )
 		{
-            [visualPluginData->currentArtwork drawInRect:NSMakeRect(10, viewRect.size.height - 10 - height, width, height) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:fraction];
+            [visualPluginData->currentArtwork drawInRect:NSMakeRect(10, viewRect.size.height - 10 - height, width, height) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:fraction];
 		}
 	}
     
