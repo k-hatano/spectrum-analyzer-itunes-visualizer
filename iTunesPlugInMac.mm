@@ -116,8 +116,6 @@ void DrawVisual( VisualPluginData * visualPluginData )
 
 	if ( visualPluginData->destView == NULL )
 		return;
-    
-    [visualPluginData->destView lockFocus];
 
 	CGRect viewRect = [visualPluginData->destView bounds];
     drawRect = viewRect;
@@ -256,8 +254,6 @@ void DrawVisual( VisualPluginData * visualPluginData )
             [visualPluginData->currentArtwork drawInRect:NSMakeRect(10, viewRect.size.height - 10 - height, width, height) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:fraction];
 		}
 	}
-    
-    [visualPluginData->destView unlockFocus];
 }
 
 //-------------------------------------------------------------------------------------------------
