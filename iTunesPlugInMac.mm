@@ -96,13 +96,17 @@ long maxSpectrum[SPECTRUMS_NUM] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 double timeOfMaxSpectrum[SPECTRUMS_NUM] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 double fadeoutTime;
 
-UInt8 averageOfSpectrumData(UInt8 *spectrumData, NSInteger position, NSInteger length){
+UInt8 averageOfSpectrumData(VisualPluginData *visualPluginData, UInt8 *spectrumData, NSInteger position, NSInteger length){
     unsigned long result = 0;
     NSInteger index;
-    for (index = position; index < position + length; index++) {
-        result += spectrumData[index];
+    if (visualPluginData->playing) {
+        for (index = position; index < position + length; index++) {
+            result += spectrumData[index];
+        }
+        return (UInt8)(result / length);
+    } else {
+        return 0;
     }
-    return (UInt8)(result / length);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -139,7 +143,7 @@ void DrawVisual( VisualPluginData * visualPluginData )
     for (NSInteger i = 0; i < SPECTRUMS_NUM; i++) {
         [[NSColor colorWithHue:i/(SPECTRUMS_NUM * 1.25f) saturation:1.0f brightness:1.0f alpha:1.0f] set];
         
-        UInt8 spectrum = averageOfSpectrumData(visualPluginData->renderData.spectrumData[0], i * samplesInBar, samplesInBar);
+        UInt8 spectrum = averageOfSpectrumData(visualPluginData, visualPluginData->renderData.spectrumData[0], i * samplesInBar, samplesInBar);
         
         if (spectrum > maxSpectrum[i]) {
             maxSpectrum[i] = spectrum;

@@ -86,7 +86,7 @@ struct VisualPluginData;
 #endif
 
 #define kInfoTimeOutInSeconds		10							// draw info/artwork for N seconds when it changes or playback starts
-#define kPlayingPulseRateInHz		30							// when iTunes is playing, draw N times a second
+#define kPlayingPulseRateInHz		5							// when iTunes is playing, draw N times a second
 #define kStoppedPulseRateInHz		30							// when iTunes is not playing, draw N times a second
 
 struct VisualPluginData
